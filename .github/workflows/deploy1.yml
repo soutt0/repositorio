@@ -1,0 +1,56 @@
+name: Deploy to Production in AWS Aula DevSecOps
+
+# Definir os gatilhos para o workflow
+on:
+  push:
+    branches:
+      - main  # Ou qualquer outra branch que deseja monitorar
+
+# Configuração das jobs do workflow
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Executa em uma máquina Ubuntu
+
+    steps:
+    # 1. Checar o código do repositório
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # 2. Configurar Node.js (Exemplo de aplicação Node.js)
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # Ou qualquer versão necessária para o seu app
+
+    # 3. Instalar dependências
+    - name: Install dependencies
+      run: npm install
+
+    # 4. Rodar os testes (Opcional, pode ser removido se não for necessário)
+    - name: Run tests
+      run: npm test
+
+    # 5. Criar os artefatos ou build (depende da aplicação)
+    - name: Build the application
+      run: npm run build
+
+
+    # 6. Fazer o deploy para o servidor via SSH
+    - name: Deploy to server via SSH
+      uses: appleboy/ssh-action@v1.2.0  # Action para SSH
+      with:
+        host: ${{ secrets.HOST }}  # Defina isso no repositório em Secrets
+        username: ${{ secrets.USER_NAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}  # Defina a chave SSH no Secrets
+        port: 22
+        script: |
+          sudo set enforce 0
+          cd ./aula || git clone https://github.com/cassiowt/nodepipeline-devops.git
+          cd nodepipeline-devops
+          git pull origin main  # Ou outro comando para atualizar o código
+          sudo npm install
+          sudo pm2 delete server 2>/dev/null
+          sudo pm2 start server.js  # Exemplo para reiniciar a aplicação Node.js com PM2
+
+
+ 
