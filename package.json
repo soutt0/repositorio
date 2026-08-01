@@ -8,7 +8,7 @@
         "start": "node server.js",
         "build": "npm install && echo \"Build completed\""
     },
-    "author": "cassiowt",
+    "author": "soutt0.script",
     "license": "MIT",
     "dependencies": {
         "body-parser": "^1.19.0",

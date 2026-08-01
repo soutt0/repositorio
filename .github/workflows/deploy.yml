@@ -35,22 +35,4 @@ jobs:
       run: npm run build
 
 
-    # 6. Fazer o deploy para o servidor via SSH
-    - name: Deploy to server via SSH
-      uses: appleboy/ssh-action@v1.2.0  # Action para SSH
-      with:
-        host: ${{ secrets.HOST }}  # Defina isso no repositório em Secrets
-        username: ${{ secrets.USER_NAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}  # Defina a chave SSH no Secrets
-        port: 22
-        script: |
-          sudo set enforce 0
-          cd ./aula || git clone https://github.com/cassiowt/nodepipeline-devops.git
-          cd nodepipeline-devops
-          git pull origin main  # Ou outro comando para atualizar o código
-          sudo npm install
-          sudo pm2 delete server 2>/dev/null
-          sudo pm2 start server.js  # Exemplo para reiniciar a aplicação Node.js com PM2
-
-
  
