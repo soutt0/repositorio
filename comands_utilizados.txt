@@ -1,0 +1,12 @@
+ssh -i aula-devops.pem ec2-user@54.107.77.250
+
+    aula-devops.pem -> chave privada obtida na AWS
+
+    ec2-user -> nome do usuario da maquina EC2
+
+    @54.107.77.250 -> ip da maquina EC2
+
+preciso pegar a chave SSH da aws, key_pair e adicionar no
+GitHub Actions em Secrets do repositorio, assim consigo 
+usar as variaveis:
+secrets.HOST, secrets.SSH_PRIVATE_KEY e secrets.USER_NAME
