@@ -33,6 +33,19 @@ jobs:
     # 5. Criar os artefatos ou build (depende da aplicação)
     - name: Build the application
       run: npm run build
-
+  
+  # 6. Fazer o deploy para o servidor via SSH
+    - name: Test SSH connection
+      uses: appleboy/ssh-action@v1.2.0  # Action para SSH
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER_NAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          echo "Conexão SSH funcionando!"
+          whoiam
+          hostname
+          pm2 -v
 
  
