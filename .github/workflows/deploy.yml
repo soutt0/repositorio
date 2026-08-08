@@ -45,7 +45,9 @@ jobs:
         script: |
           echo "Conexão SSH funcionando!"
           cd repositorio
-          git pull
-          npm start
+          git pull origin main
+          npm install
+          pm2 delete server 2>/dev/null
+          pm2 start server.js --name server
 
  
