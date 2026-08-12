@@ -49,5 +49,6 @@ jobs:
           npm install
           pm2 delete server 2>/dev/null
           pm2 start server.js --name server
+          
 
  
