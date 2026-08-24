@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-// http://localhost:3000/
+// http://localhost:3000/ 
 
 router.get('/', (req, res) => {
     res.status(200).json({ success: true, data: 'healthy!' });
