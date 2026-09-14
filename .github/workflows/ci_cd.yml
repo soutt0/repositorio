@@ -1,3 +1,5 @@
+# Acredito que funcione agora a chave SSH, a chave privada (.pem) foi colocada no GitHub Secrets 
+# e a publica foi colocada no final do arquivo authorized_keys da EC2
 name: CI/CD Pipeline - SonarQube + OWASP ZAP
 
 on:
