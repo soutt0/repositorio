@@ -1,9 +1,5 @@
-# Versão corrigida do professor ainda preciso arrumar a EC2, colocando mais memoria
-# ou trocar o tipo da EC2, para rodar o SonarQube, OWASP ZAP ao mesmo tempo,
-# no momento com apenas 1Giga de memoria RAM e com processador fraco o docker não consegue
-# nem criar a EC2, depois excluir esse comentario e fazer o push para testar tudo isso na EC2
+name: CI/CD Pipeline - SonarQube + OWASP ZAP
 
-name: CI/CD Pipeline with SonarQube and ZAP
 on:
   push:
     branches:
@@ -13,12 +9,14 @@ on:
       - main
 
 jobs:
-  sonar_scan:
+  sonarqube-analysis:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # histórico completo - SonarQube usa isso para detectar codigo novo/alterado
 
       - name: Install SonarQube Scanner
         run: |
@@ -30,20 +28,25 @@ jobs:
       - name: Run SonarQube Analysis
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=nodepipeline-devops \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECTKEY }} \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://54.91.17.153:9000 \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
+            -Dsonar.login=${{ secrets.SONAR_LOGIN }}
 
-  zap_scan:
+  owasp-zap-scan:
     name: OWASP ZAP Baseline Scan
+    needs: sonarqube-analysis   # só roda se o job do SonarQube passar
     runs-on: ubuntu-latest
-    needs: sonar_scan
+    permissions:
+      contents: read
+      issues: write            # a action abre e atualiza uma issue no repo com os alertas encontrados
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
-          target: 'http://<url-da-aplicacao-a-testar>'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: 'http://18.229.232.47:3000'
+          fail_action: false   # nao derruba o pipeline por causa dos alertas (mudar para true se qquiser bloquear o merge)
