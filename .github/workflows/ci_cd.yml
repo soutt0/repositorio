@@ -30,8 +30,10 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST }}
         run: |
           for attempt in {1..30}; do
-            if curl --fail --silent --show-error --connect-timeout 10 \
-              "$SONAR_HOST_URL/api/system/status"; then
+            status=$(curl --silent --show-error --connect-timeout 10 \
+              "$SONAR_HOST_URL/api/system/status" 2>/dev/null || true)
+            echo "Status atual do SonarQube: ${status:-indisponivel}"
+            if printf '%s' "$status" | grep -Eq '"status"[[:space:]]*:[[:space:]]*"UP"'; then
               exit 0
             fi
             echo "SonarQube ainda nao esta acessivel (tentativa $attempt/30)."
