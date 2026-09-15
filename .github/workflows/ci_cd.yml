@@ -36,6 +36,7 @@ jobs:
           args: >-
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECTKEY }}
             -Dsonar.sources=.
+            -Dsonar.scanner.skipJreProvisioning=true
 
   owasp-zap-scan:
     name: OWASP ZAP Baseline Scan
