@@ -1,6 +1,4 @@
-# Acredito que funcione agora a chave SSH, a chave privada (.pem) foi colocada no GitHub Secrets 
-# e a publica foi colocada no final do arquivo authorized_keys da EC2
-# outro teste pois acabei usando o docker compose down ao inves de docker compose stop
+# att as secrets = projectKey, host e o token
 name: CI/CD Pipeline - SonarQube + OWASP ZAP
 
 on:
