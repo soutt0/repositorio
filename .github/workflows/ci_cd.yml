@@ -51,5 +51,5 @@ jobs:
         uses: zaproxy/action-baseline@v0.15.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          target: 'http://18.229.232.47:3000'
+          target: 'http://${{ secrets.HOST }}:3000'
           fail_action: false   # nao derruba o pipeline por causa dos alertas (mudar para true se qquiser bloquear o merge)
