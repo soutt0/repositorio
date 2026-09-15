@@ -70,14 +70,9 @@ services:
     image: docker.elastic.co/beats/filebeat:8.15.3
     user: root
     restart: unless-stopped
-    entrypoint: ["/bin/sh", "-c"]
-    command: >-
-      cp /config/filebeat.yml /tmp/filebeat.yml &&
-      chown root:root /tmp/filebeat.yml &&
-      chmod 600 /tmp/filebeat.yml &&
-      exec /usr/share/filebeat/filebeat -e -c /tmp/filebeat.yml
+    command: ["-e", "--strict.perms=false"]
     volumes:
-      - ./monitoring/filebeat/filebeat.yml:/config/filebeat.yml:ro
+      - ./monitoring/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
