@@ -47,6 +47,8 @@ jobs:
           cd "$HOME/repositorio"
           test -f docker-compose.yml
           git pull origin main
+          docker compose -f docker-compose.yml down --remove-orphans || true
+          docker rm -f node-app prometheus grafana elasticsearch logstash filebeat kibana zap owasp_zap sonarqube sonarqube_db 2>/dev/null || true
           docker compose -f docker-compose.yml config --services
           docker compose -f docker-compose.yml up -d --build --remove-orphans
           sleep 10

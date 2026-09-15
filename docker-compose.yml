@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    container_name: node-app
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -10,7 +9,6 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.54.1
-    container_name: prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -27,7 +25,6 @@ services:
 
   grafana:
     image: grafana/grafana:11.2.0
-    container_name: grafana
     restart: unless-stopped
     ports:
       - "3001:3000"
@@ -43,7 +40,6 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
-    container_name: elasticsearch
     restart: unless-stopped
     ports:
       - "9200:9200"
@@ -59,7 +55,6 @@ services:
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.15.3
-    container_name: logstash
     restart: unless-stopped
     ports:
       - "5044:5044"
@@ -73,7 +68,6 @@ services:
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.15.3
-    container_name: filebeat
     user: root
     restart: unless-stopped
     volumes:
@@ -87,7 +81,6 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.15.3
-    container_name: kibana
     restart: unless-stopped
     ports:
       - "5601:5601"
@@ -101,7 +94,6 @@ services:
 
   zap:
     image: ghcr.io/zaproxy/zaproxy:stable
-    container_name: zap
     restart: unless-stopped
     command: zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
     ports:
@@ -111,7 +103,6 @@ services:
 
   sonarqube:
     image: sonarqube:10.7-community
-    container_name: sonarqube
     restart: unless-stopped
     ports:
       - "9000:9000"
