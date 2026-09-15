@@ -1,4 +1,5 @@
 # att as secrets = projectKey, host e o token
+# sonarqube
 name: CI/CD Pipeline - SonarQube + OWASP ZAP
 
 on:
