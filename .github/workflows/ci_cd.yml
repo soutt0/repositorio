@@ -1,5 +1,5 @@
-# att as secrets = projectKey, host e o token
-# sonarqube
+# att as secrets do SONAR -> projectKey, host e o token
+# pegando novamente a informação da chave .pem e colocando no secrets
 name: CI/CD Pipeline - SonarQube + OWASP ZAP
 
 on:
