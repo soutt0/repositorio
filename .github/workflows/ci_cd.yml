@@ -21,20 +21,22 @@ jobs:
         with:
           fetch-depth: 0  # histórico completo - SonarQube usa isso para detectar codigo novo/alterado
 
-      - name: Install SonarQube Scanner
+      - name: Check SonarQube availability
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST }}
         run: |
-          curl -Lo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-          unzip sonar-scanner.zip
-          mv sonar-scanner-4.7.0.2747-linux sonar-scanner
-          echo "$(pwd)/sonar-scanner/bin" >> $GITHUB_PATH
+          curl --fail --silent --show-error --connect-timeout 15 \
+            "$SONAR_HOST_URL/api/system/status"
 
       - name: Run SonarQube Analysis
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECTKEY }} \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
-            -Dsonar.login=${{ secrets.SONAR_LOGIN }}
+        uses: SonarSource/sonarqube-scan-action@v6.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_LOGIN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST }}
+        with:
+          args: >-
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECTKEY }}
+            -Dsonar.sources=.
 
   owasp-zap-scan:
     name: OWASP ZAP Baseline Scan

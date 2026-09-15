@@ -48,6 +48,14 @@ jobs:
           git pull origin main
           docker compose up -d --build --remove-orphans
           docker compose ps
+          running_services=$(docker compose ps --services --filter status=running | wc -l)
+          expected_services=$(docker compose config --services | wc -l)
+          if [ "$running_services" -ne "$expected_services" ]; then
+            echo "Nem todos os servicos estao rodando ($running_services/$expected_services)."
+            docker compose ps -a
+            docker compose logs --tail=100
+            exit 1
+          fi
           
 
  
