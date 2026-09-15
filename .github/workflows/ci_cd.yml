@@ -3,29 +3,42 @@
 name: CI/CD Pipeline - SonarQube + OWASP ZAP
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+  workflow_run:
+    workflows: ["Deploy to Production in AWS Aula DevSecOps"]
+    types: [completed]
 
 jobs:
   sonarqube-analysis:
     name: SonarQube Analysis
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # histórico completo - SonarQube usa isso para detectar codigo novo/alterado
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Check SonarQube availability
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST }}
         run: |
-          curl --fail --silent --show-error --connect-timeout 15 \
-            "$SONAR_HOST_URL/api/system/status"
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error --connect-timeout 10 \
+              "$SONAR_HOST_URL/api/system/status"; then
+              exit 0
+            fi
+            echo "SonarQube ainda nao esta acessivel (tentativa $attempt/30)."
+            sleep 10
+          done
+          echo "SonarQube nao ficou acessivel a tempo."
+          exit 1
 
       - name: Run SonarQube Analysis
         uses: SonarSource/sonarqube-scan-action@v6.0.0
