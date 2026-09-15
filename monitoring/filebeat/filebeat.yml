@@ -6,6 +6,10 @@ filebeat.inputs:
     processors:
       - add_docker_metadata:
           host: unix:///var/run/docker.sock
+      - drop_event:
+          when:
+            regexp:
+              container.name: ".*(logstash|filebeat).*"
 
 output.logstash:
   hosts: ["logstash:5044"]

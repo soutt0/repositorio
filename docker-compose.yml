@@ -1,7 +1,14 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   app:
     build: .
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "3000:3000"
     networks:
@@ -10,6 +17,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.54.1
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "9090:9090"
     volumes:
@@ -26,6 +34,7 @@ services:
   grafana:
     image: grafana/grafana:11.2.0
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "3001:3000"
     environment:
@@ -41,6 +50,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "9200:9200"
     environment:
@@ -56,6 +66,7 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:8.15.3
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "5044:5044"
       - "9600:9600"
@@ -70,6 +81,7 @@ services:
     image: docker.elastic.co/beats/filebeat:8.15.3
     user: root
     restart: unless-stopped
+    logging: *default-logging
     command: ["-e", "--strict.perms=false"]
     volumes:
       - ./monitoring/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
@@ -83,6 +95,7 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:8.15.3
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "5601:5601"
     environment:
@@ -96,6 +109,7 @@ services:
   zap:
     image: ghcr.io/zaproxy/zaproxy:stable
     restart: unless-stopped
+    logging: *default-logging
     command: zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
     ports:
       - "8090:8080"
@@ -105,6 +119,7 @@ services:
   sonarqube:
     image: sonarqube:10.7-community
     restart: unless-stopped
+    logging: *default-logging
     ports:
       - "9000:9000"
     environment:
