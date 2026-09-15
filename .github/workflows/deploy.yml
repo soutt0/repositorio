@@ -44,16 +44,19 @@ jobs:
         port: 22
         script: |
           echo "Conexão SSH funcionando!"
-          cd repositorio
+          cd "$HOME/repositorio"
+          test -f docker-compose.yml
           git pull origin main
-          docker compose up -d --build --remove-orphans
-          docker compose ps
-          running_services=$(docker compose ps --services --filter status=running | wc -l)
-          expected_services=$(docker compose config --services | wc -l)
+          docker compose -f docker-compose.yml config --services
+          docker compose -f docker-compose.yml up -d --build --remove-orphans
+          sleep 10
+          docker compose -f docker-compose.yml ps -a
+          running_services=$(docker compose -f docker-compose.yml ps --services --filter status=running | wc -l)
+          expected_services=$(docker compose -f docker-compose.yml config --services | wc -l)
           if [ "$running_services" -ne "$expected_services" ]; then
             echo "Nem todos os servicos estao rodando ($running_services/$expected_services)."
-            docker compose ps -a
-            docker compose logs --tail=100
+            docker compose -f docker-compose.yml ps -a
+            docker compose -f docker-compose.yml logs --tail=100
             exit 1
           fi
           
